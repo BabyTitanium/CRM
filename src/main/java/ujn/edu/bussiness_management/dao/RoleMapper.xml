@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ujn.edu.bussiness_management.dao.RoleMapper">
+  <resultMap id="BaseResultMap" type="ujn.edu.bussiness_management.model.Role">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="rname" jdbcType="VARCHAR" property="rname" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role, rname
+  </sql>
+  <insert id="insert" parameterType="ujn.edu.bussiness_management.model.Role">
+    insert into role (id, role, rrname
+      )
+    values (#{id,jdbcType=BIGINT}, #{role,jdbcType=VARCHAR}, #{rname,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ujn.edu.bussiness_management.model.Role">
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+      <if test="rname != null">
+        rname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="rname != null">
+        #{rname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+<select id="findByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  select
+  <include refid="Base_Column_List" />
+  from role
+  where id = #{id,jdbcType=INTEGER}
+</select>
+</mapper>

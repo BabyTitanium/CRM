@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ujn.edu.bussiness_management.dao.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="ujn.edu.bussiness_management.model.UserInfo">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="userId" jdbcType="BIGINT" property="userId" />
+        <result column="leaderId" jdbcType="BIGINT" property="leaderId" />
+        <result column="realName" jdbcType="VARCHAR" property="realName" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, userId, leaderId, realName, age, sex, address, telephone, phone
+    </sql>
+
+    <select id="findByUid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_Info
+        where userId = #{userId,jdbcType=BIGINT}
+    </select>
+    <select id="findByLid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_Info
+        where leaderId = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

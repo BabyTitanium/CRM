@@ -1,0 +1,146 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>企业客户管理系统</title>
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src="@{/jquery-2.2.4.min.js}" ></script>
+    <script th:src="@{/layui.all.js}" ></script>
+    <script th:src="@{/Chart.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/layui.css}" />
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+
+
+    <div th:include="header"></div>
+    <div th:include="left"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <h1>本周款项记录</h1>
+            <table class="layui-table" lay-size="lg">
+                <colgroup>
+                    <col width="500">
+                    <col width="500">
+                    <col width="500">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>成交合同数</th>
+                    <th>成交合同金额</th>
+                    <th>汇款金额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>贤心</td>
+                    <td>2016-11-29</td>
+                    <td>人生就像是一场修行</td>
+                </tr>
+
+                </tbody>
+            </table>
+            <br><br>
+            <h1>本周新增数据统计</h1>
+            <table class="layui-table" lay-size="lg">
+                <colgroup>
+                    <col width="500">
+                    <col width="500">
+                    <col width="500">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>新创建客户</th>
+                    <th>联系客户数</th>
+                    <th>新建销售机会</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>贤心</td>
+                    <td>2016-11-29</td>
+                    <td>人生就像是一场修行</td>
+                </tr>
+
+                </tbody>
+            </table>
+            <br><br>
+            <h1>客户分类统计</h1>
+            <div class="layui-container">
+                <div class="layui-row">
+                    <div class="layui-col-md4">
+                        <canvas id="myChart" width="300" height="300"></canvas>
+                    </div>
+                    <div class="layui-col-md4">
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+
+        </div>
+    </div>
+</div>
+</body>
+    <script>
+        var ctx = $("#myChart");
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["重点客户", "普通客户", "低价值客户"],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+
+
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+        $.ajax({
+            type:"post",
+            dataType: "html",
+            url: '',
+            data: dataurl,
+            success: function (data) {
+                if (data != "") {
+                    $("#pager").pager({ pagenumber: pagenumber, pagecount: data.split("$$")[1], buttonClickCallback: PageClick });
+                    $("#anhtml").html(data.split("$$")[0]);
+
+                }
+            }
+
+        });
+        // function logout() {
+        //     window.open("/userlogout");
+        // }
+    </script>
+
+</html>

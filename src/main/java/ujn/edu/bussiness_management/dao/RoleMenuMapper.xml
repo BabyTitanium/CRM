@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ujn.edu.bussiness_management.dao.RoleMenuMapper">
+    <resultMap id="BaseResultMap" type="ujn.edu.bussiness_management.model.RoleMenu">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="roleId" jdbcType="BIGINT" property="roleId" />
+        <result column="menuId" jdbcType="BIGINT" property="menuId" />
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, roleId, menuId
+    </sql>
+
+    <select id="findByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from role_menu
+        where roleId = #{roleId,jdbcType=BIGINT}
+    </select>
+
+</mapper>

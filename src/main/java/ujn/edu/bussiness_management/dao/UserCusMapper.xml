@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ujn.edu.bussiness_management.dao.UserCusMapper">
+  <resultMap id="BaseResultMap" type="ujn.edu.bussiness_management.model.UserCus">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="userId" jdbcType="BIGINT" property="userId" />
+    <result column="cusId" jdbcType="BIGINT" property="cusId" />
+    <result column="nextDate" jdbcType="TIMESTAMP" property="nextDate" />
+    <result column="giveDate" jdbcType="TIMESTAMP" property="giveDate"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, userId, cusId, nextDate, giveDate
+  </sql>
+<select id="selectAllCustomer" parameterType="java.lang.Long" resultType="java.util.Map">
+  SELECT c.*,us.*
+   FROM user_cus us,user u,customer c
+   WHERE
+   u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.cusId=c.id
+</select>
+
+  <insert id="insert" parameterType="ujn.edu.bussiness_management.model.UserCus">
+    insert into user_cus (id, userId, cusId
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{cusId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ujn.edu.bussiness_management.model.UserCus">
+    insert into user_cus
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        userId,
+      </if>
+      <if test="cusId != null">
+        cusId,
+      </if>
+      <if test="nextDate!=null">
+        nextDate,
+      </if>
+      <if test="giveDate!=null">
+        giveDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="cusId != null">
+        #{cusId,jdbcType=BIGINT},
+      </if>
+      <if test="nextDate != null">
+        #{nextDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="giveDate != null">
+        #{giveDate ,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

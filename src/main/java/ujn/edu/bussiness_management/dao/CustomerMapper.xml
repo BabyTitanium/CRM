@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ujn.edu.bussiness_management.dao.CustomerMapper">
+    <resultMap id="BaseResultMap" type="ujn.edu.bussiness_management.model.Customer">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="cname" jdbcType="VARCHAR" property="cname" />
+        <result column="ctype" jdbcType="VARCHAR" property="ctype" />
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="createDate" jdbcType="TIMESTAMP" property="createDate"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, cname, ctype, sex, telephone,phone,email,address,remark,creator,createDate
+    </sql>
+    <insert id="addCustomer" keyProperty="id" parameterType="ujn.edu.bussiness_management.model.Customer" useGeneratedKeys="true">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="cname != null">
+                cname,
+            </if>
+            <if test="ctype != null">
+                ctype,
+            </if>
+            <if test="sex !=null">
+                sex,
+            </if>
+            <if test="telephone != null">
+                telephone,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="createDate != null">
+                createDate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="cname != null">
+                #{cname,jdbcType=VARCHAR},
+            </if>
+            <if test="ctype != null">
+                #{ctype,jdbcType=VARCHAR},
+            </if>
+            <if test="sex !=null">
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="selectCustomer" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from customer
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <update id="updateCustomer" parameterType="ujn.edu.bussiness_management.model.Customer">
+            update customer
+    set ctype = #{ctype,jdbcType=VARCHAR},
+          sex = #{sex,jdbcType=VARCHAR},
+          telephone=#{telephone,jdbcType=VARCHAR},
+          phone=#{phone,jdbcType=VARCHAR},
+          address=#{address,jdbcType=VARCHAR},
+          email=#{email,jdbcType=VARCHAR},
+          remark=#{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

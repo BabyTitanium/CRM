@@ -1,0 +1,85 @@
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>企业客户管理系统</title>
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src="@{/jquery-2.2.4.min.js}" ></script>
+
+    <script th:src="@{/Chart.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/layui.css}" />
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <form id="user" onsubmit="return subUser();" class="layui-form"  style="padding-left: 5%;padding-right:10%;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择用户</label>
+            <div class="layui-input-block">
+                <input type="text" name="cusId" hidden th:value="${cusId}">
+                <select name="user" lay-verify="required" lay-search="">
+
+                    <option  th:each="user:${userInfos}" th:value="${user.userId}"><span th:text="${user.realName}"></span></option>
+
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="subUser" class="layui-btn" lay-submit="" lay-filter="demo1" >确定</button>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+<script th:src="@{/layui.all.js}" ></script>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    //不出现底部栏
+    function subUser() {
+
+        var param=$("#user").serialize();
+        console.log(param);
+        var url='/user/subCusShare';
+        $.ajax({
+            type: "POST",
+            url: url,//注意路径
+            data: param,
+            dataType: "json",
+            success:function(data){
+                if(data.result=='SUCCESS'){
+                    layer.confirm('分享成功', {
+                        btn: ['确认' ] //可以无限个按钮
+                        ,btn1: function(index, layero){
+
+                            location.reload();
+                        }
+                    } );
+
+                }else{
+                    layer.confirm('分享失败', {
+                        btn: ['确认' ] //可以无限个按钮
+                        ,btn1: function(index, layero){
+                        }
+                    } );
+                }
+            },
+            error:function(data){
+                layer.confirm('分享失败', {
+                    btn: ['确认' ] //可以无限个按钮
+                    ,btn1: function(index, layero){
+                    }
+                } );
+            }
+        });
+        return false;
+    }
+    /*]]>*/
+</script>
+</body>
+
+</html>
+

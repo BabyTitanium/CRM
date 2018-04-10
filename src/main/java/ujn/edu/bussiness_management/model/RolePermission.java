@@ -1,0 +1,33 @@
+package ujn.edu.bussiness_management.model;
+
+public class RolePermission {
+    private  Long id;
+
+    private Long  roleId;
+
+    private Long  permissionId;
+
+    public Long  getId() {
+        return id;
+    }
+
+    public void setId(Long  id) {
+        this.id = id;
+    }
+
+    public Long  getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long  userId) {
+        this.roleId = userId;
+    }
+
+    public Long  getPermissionId() {
+        return permissionId;
+    }
+
+    public void setPermissionId(Long  permissionId) {
+        this.permissionId = permissionId;
+    }
+}
