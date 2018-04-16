@@ -11,13 +11,19 @@
   <sql id="Base_Column_List">
     id, userId, cusId, nextDate, giveDate
   </sql>
-<select id="selectAllCustomer" parameterType="java.lang.Long" resultType="java.util.Map">
-  SELECT c.*,us.*
+<select id="selectAllCustomer" parameterType="java.util.Map" resultType="java.util.Map">
+  SELECT c.*,us.id as uId,us.giveDate as giveDate ,us.nextDate as nextDate,us.cusId as cusId
    FROM user_cus us,user u,customer c
    WHERE
    u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.cusId=c.id
+limit #{first,jdbcType=BIGINT},#{last,jdbcType=BIGINT}
 </select>
-
+  <select id="selectCountAllCustomer" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(*) from((SELECT c.*
+    FROM user_cus us,user u,customer c
+    WHERE
+    u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.cusId=c.id) as  s)
+  </select>
   <insert id="insert" parameterType="ujn.edu.bussiness_management.model.UserCus">
     insert into user_cus (id, userId, cusId
       )
@@ -61,5 +67,41 @@
       </if>
     </trim>
   </insert>
+  <update id="updateNextTime" parameterType="java.util.Map" >
+    UPDATE user_cus
+    set  nextDate=#{nextTime,jdbcType=TIMESTAMP}
+    WHERE
+    userId=#{userId,jdbcType=BIGINT} and cusId=#{cusId,jdbcType=BIGINT}
+  </update>
+<delete id="deleteUserCus" parameterType="java.lang.Long">
+  DELETE  FROM  user_cus where id=#{id,jdbcType=BIGINT}
+</delete>
 
+  <select id="selectSharedCustomer" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT c.*,cs.time as sharedate,ui.realName
+    FROM customer c,cus_share cs,user_Info ui
+    WHERE
+    cs.shareUserId=#{id,jdbcType=BIGINT} AND cs.recUserId=ui.userId AND cs.cusId=c.id
+    limit #{first,jdbcType=BIGINT},#{last,jdbcType=BIGINT}
+  </select>
+  <select id="selectCountSharedCustomer" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    SELECT  COUNT(*) from ((SELECT c.*,cs.time as sharedate,ui.realName
+    FROM customer c,cus_share cs,user_Info ui
+    WHERE
+    cs.shareUserId=#{id,jdbcType=BIGINT} AND cs.recUserId=ui.userId AND cs.cusId=c.id) as g)
+  </select>
+  <!--<select id="selectAllCustomers" parameterType="java.lang.Long" resultMap="java.util.Map">-->
+    <!--SELECT c.*,us.id as uId,us.giveDate as giveDate ,us.nextDate as nextDate,us.cusId as cusId-->
+    <!--FROM user_cus us,user u,customer c-->
+    <!--WHERE-->
+    <!--u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.cusId=c.id-->
+  <!--</select>-->
+
+  <select id="selectCustomers" parameterType="java.lang.Long" resultType="java.util.Map">
+    SELECT c.*,us.id as uId,us.giveDate as giveDate ,us.nextDate as nextDate,us.cusId as cusId
+    FROM user_cus us,user u,customer c
+    WHERE
+    u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.cusId=c.id
+
+  </select>
 </mapper>

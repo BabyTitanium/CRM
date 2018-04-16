@@ -19,7 +19,7 @@
             <label class="layui-form-label">选择用户</label>
             <div class="layui-input-block">
                 <input type="text" name="cusId" hidden th:value="${cusId}">
-                <select name="user" lay-verify="required" lay-search="">
+                <select name="us" lay-verify="required" lay-search="">
 
                     <option  th:each="user:${userInfos}" th:value="${user.userId}"><span th:text="${user.realName}"></span></option>
 

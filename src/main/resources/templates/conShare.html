@@ -14,52 +14,36 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
 
-    <form id="next" onsubmit="return subNext();" class="layui-form"  style="padding-left: 5%;padding-right:10%;">
+    <form id="user" onsubmit="return subUser();" class="layui-form"  style="padding-left: 5%;padding-right:10%;">
         <div class="layui-form-item">
             <label class="layui-form-label">选择用户</label>
-            <div class="layui-block">
-                <label class="layui-form-label">选择下次联系时间</label>
-                <div class="layui-input-block">
-                    <input type="text" name="cusId" hidden  th:value="${cusId}">
-                    <input type="text" class="layui-input" id="nextTime" name="nextTime" placeholder="yyyy-MM-dd">
-                </div>
+            <div class="layui-input-block">
+                <input type="text" name="cusId" hidden th:value="${cusId}">
+                <select name="us" lay-verify="required" lay-search="">
+
+                    <option  th:each="user:${userInfos}" th:value="${user.userId}"><span th:text="${user.realName}"></span></option>
+
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button type="subNext" class="layui-btn" lay-submit="" lay-filter="demo1" >确定</button>
+                <button type="subUser" class="layui-btn" lay-submit="" lay-filter="demo1" >确定</button>
 
             </div>
         </div>
     </form>
-
 
 </div>
 <script th:src="@{/layui.all.js}" ></script>
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
     //不出现底部栏
-    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element'], function() {
-        var laydate = layui.laydate //日期
-            , laypage = layui.laypage //分页
-        layer = layui.layer //弹层
-            , table = layui.table //表格
-            , carousel = layui.carousel //轮播
-            , upload = layui.upload //上传
-            , element = layui.element; //元素操作
+    function subUser() {
 
-        laydate.render({
-            elem: '#nextTime'
-            , showBottom: false
-        });
-    });
-    function subNext() {
-        var td=$("#nextTime").val();
-        var d=td.toString();
-        var param=$.param({"date":d}) + "&" + $("#next").serialize();
-
+        var param=$("#user").serialize();
         console.log(param);
-        var url='/user/subTime';
+        var url='/user/contact/subConShare';
         $.ajax({
             type: "POST",
             url: url,//注意路径
@@ -67,7 +51,7 @@
             dataType: "json",
             success:function(data){
                 if(data.result=='SUCCESS'){
-                    layer.confirm('设置成功', {
+                    layer.confirm('分享成功', {
                         btn: ['确认' ] //可以无限个按钮
                         ,btn1: function(index, layero){
 
@@ -76,7 +60,7 @@
                     } );
 
                 }else{
-                    layer.confirm('设置失败1', {
+                    layer.confirm('分享失败', {
                         btn: ['确认' ] //可以无限个按钮
                         ,btn1: function(index, layero){
                         }
@@ -84,7 +68,7 @@
                 }
             },
             error:function(data){
-                layer.confirm('设置失败', {
+                layer.confirm('分享失败', {
                     btn: ['确认' ] //可以无限个按钮
                     ,btn1: function(index, layero){
                     }
@@ -92,7 +76,6 @@
             }
         });
         return false;
-
     }
     /*]]>*/
 </script>

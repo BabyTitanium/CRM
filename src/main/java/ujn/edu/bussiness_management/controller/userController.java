@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ujn.edu.bussiness_management.dao.CustomerMapper;
 import ujn.edu.bussiness_management.dao.UserCusMapper;
 import ujn.edu.bussiness_management.dao.UserInfoMapper;
-import ujn.edu.bussiness_management.model.Customer;
-import ujn.edu.bussiness_management.model.User;
-import ujn.edu.bussiness_management.model.UserCus;
-import ujn.edu.bussiness_management.model.UserInfo;
+import ujn.edu.bussiness_management.model.*;
 import ujn.edu.bussiness_management.service.ICustomerService;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -57,14 +56,14 @@ public class userController {
         }
     }
     @RequestMapping("loadAllCustomer")
-    public @ResponseBody Map<String,Object> loadAllCustomer(){
+    public @ResponseBody Map<String,Object> loadAllCustomer(int page,int limit){
         Long userId=Long.valueOf(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userId")));
         try {
-            List<Map<String,Object>> customers = customerService.loadAllCustomer(userId);
+            List<Map<String,Object>> customers = customerService.loadAllCustomer(userId,page,limit);
+            int count=customerService.countLoadAllCustomer(userId);
             //转换时间格式
             for(Map<String,Object> m:customers){
                 if(m.get("giveDate")!=null){
-
                     Date gDate=(Date)m.get("giveDate");
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     sdf.format(gDate);
@@ -75,13 +74,15 @@ public class userController {
                     Date gDate=(Date)m.get("nextDate");
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     sdf.format(gDate);
-                    m.put("nextDate",gDate);
+                    String str=String.valueOf(gDate);
+                    m.put("nextDate",str);
                 }
+
             }
             Map<String,Object> map=new HashMap();
             map.put("code",0);
             map.put("msg","");
-            map.put("count",1000);
+            map.put("count",count);
             map.put("data",customers);
             return map;
         }catch (Exception e){
@@ -89,7 +90,11 @@ public class userController {
         }
     }
     @RequestMapping("/contact")
-    public  String contact(){
+    public  String contact( Model model){
+        Long userId=Long.valueOf(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userId")));
+        System.out.println(userId);
+        List<Map<String,Object>> cust=customerService.loadAllCustomers(userId);
+        model.addAttribute("cust",cust);
         return "contact";
     }
     @RequestMapping("/cusEdit")
@@ -126,22 +131,98 @@ public class userController {
         return "cusShare";
     }
     @RequestMapping("/conext")
-    public String conext(Integer cusId){
-
+    public String conext(Integer cusId,Model model){
+        model.addAttribute("cusId",cusId);
         return "conext";
     }
-    @RequestMapping("/editCustomer")
-    public  @ResponseBody editCustomer(Long cusId,Long userId){
+    @RequestMapping("/subCusShare")
+    public  @ResponseBody Map<String, Object> subCusShare(Long cusId,Long us){
         Map<String,Object> data=new HashMap();
         try{
-            Long userId=Long.valueOf(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userId")));
-            customerService.editCustomer(customer);
+            //先记录下分享表
+            Long uId=Long.valueOf(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userId")));
+            CusShare cusShare=new CusShare();
+            cusShare.setCusId(cusId);
+            cusShare.setRecUserId(us);
+            cusShare.setShareUserId(uId);
+            cusShare.setTime(new Date());
+            customerService.subCusShare(cusShare);
+            //然后在将客户分享给用户
+            UserCus userCus=new UserCus();
+            userCus.setUserId(us);
+            userCus.setCusId(cusId);
+            userCus.setGiveDate(new Date());
+            customerService.createUserCus(userCus);
             data.put("result","SUCCESS");
             return  data;
         }catch (Exception e){
             System.out.println(e);
             return data;
         }
-           return;
     }
+    @RequestMapping("/subTime")
+    public @ResponseBody Map<String,Object> subTime(Long cusId,String date){
+        Map<String,Object> data=new HashMap<>();
+        try{
+            Long uId=Long.valueOf(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userId")));
+            Map<String,Object> temp=new HashMap<>();
+            temp.put("cusId",cusId);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            System.out.println(date);
+        //    Date s=new Date( date);
+            LocalDate s= LocalDate.parse(date);
+            System.out.println(s);
+            temp.put("nextTime",s);
+            temp.put("userId",uId);
+            customerService.setNextTime(temp);
+            data.put("result","SUCCESS");
+
+            return data;
+        }catch (Exception e){
+            return  null;
+        }
+    }
+    @RequestMapping("/deleteCus")
+    public  @ResponseBody  Map<String,Object> deleteCus(Long uId){
+        System.out.println(uId);
+        Map<String,Object> data=new HashMap<>();
+        try{
+            customerService.deleteCus(uId);
+
+            data.put("result","SUCCESS");
+            return  data;
+        }catch (Exception e){
+            return  null;
+        }
+    }
+    @RequestMapping("/loadSharedCustomer")
+    public  @ResponseBody Map<String,Object> loadSharedCustomer(int page,int limit){
+        List<Map<String,Object>> data=new ArrayList<>();
+        try{
+            Long uId=Long.valueOf(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userId")));
+            data=customerService.loadSharedCustomer(uId,page,limit);
+            for(Map<String,Object> m:data){
+                if(m.get("sharedate")!=null){
+
+                    Date gDate=(Date)m.get("sharedate");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    sdf.format(gDate);
+                    String str=String.valueOf(gDate);
+                    m.put("sharedate",str);
+                }
+
+            }
+            Integer count=customerService.loadCountSharedCustomer(uId);
+            System.out.println(data);
+            Map<String,Object> map=new HashMap();
+            map.put("code",0);
+            map.put("msg","");
+            map.put("count",count);
+            map.put("data",data);
+            return map;
+        }catch (Exception E){
+            return  null;
+        }
+    }
+
 }

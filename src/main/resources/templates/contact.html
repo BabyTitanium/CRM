@@ -32,12 +32,13 @@
 
                 <div class="layui-tab-item layui-show">
 
-                    <table class="layui-hide" id="cusList" lay-filter="demo"></table>
+                    <table class="layui-hide" id="conList" lay-filter="demo"></table>
                     <script type="text/html" id="barDemo">
-                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-                        <a class="layui-btn layui-btn-xs" lay-event="edit">共享</a>
-                        <a class="layui-btn layui-btn-xs" lay-event="edit">下次联系时间</a>
-                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                        <button data-method="offset" data-type="auto" class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>
+
+                        <button class="layui-btn layui-btn-xs" lay-event="share">共享</button>
+                        <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button>
+                        <button class="layui-btn layui-btn-xs" lay-event="conext">下次联系时间</button>
                     </script>
 
                 </div>
@@ -46,24 +47,25 @@
                     <!--新建客户-->
                     <div class="layui-col-lg6">
 
-                        <form id="customer" onsubmit="return submitCustomer();" class="layui-form"  style="padding-left: 5%;padding-right:10%;">
+                        <form id="contact" onsubmit="return submitContact();" class="layui-form"  style="padding-left: 5%;padding-right:10%;">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">联系人名称</label>
                                 <div class="layui-input-block">
                                     <input type="text" required  name="name" lay-verify="title" autocomplete="off" placeholder="请输入联系人名称" class="layui-input">
                                 </div>
                             </div>
-
-
                             <div class="layui-form-item">
                                 <label class="layui-form-label">所属客户</label>
                                 <div class="layui-input-block">
-                                    <select name="belong" lay-verify="required" lay-search="">
-                                        <option value="A">(A)重点客户</option>
-                                        <option value="B">(B)普通客户</option>
-                                        <option value="C" selected="">(C)低价值客户</option>
+                                    <select name="belongCus"  lay-verify="required" lay-search="">
+                                        <option th:each="cus:${cust}" th:value="${cus.id}"><span th:text="${cus.cname}"></span> </option>
+                                        <!--<option value="A">(A)重点客户</option>-->
+                                        <!--<option value="B">(B)普通客户</option>-->
+                                        <!--<option value="C" selected="">(C)低价值客户</option>-->
                                     </select>
                                 </div>
+                            </div>
+
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">性别</label>
                                     <div class="layui-input-block">
@@ -71,7 +73,7 @@
                                         <input type="radio" name="sex" value="女" title="女">
                                     </div>
                                 </div>
-                            </div>
+
                             <div class="layui-form-item">
                                 <label class="layui-form-label">手机</label>
                                 <div class="layui-input-block">
@@ -91,21 +93,16 @@
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label">QQ</label>
-                                <div class="layui-input-block">
-                                    <input type="text"  name="QQ" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
                                 <label class="layui-form-label">职位</label>
                                 <div class="layui-input-block">
                                     <input type="text"  name="position" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
                                 </div>
                             </div>
+
                             <div class="layui-form-item layui-form-text">
-                                <label class="layui-form-label">部门</label>
+                                <label class="layui-form-label">备注</label>
                                 <div class="layui-input-block">
-                                    <textarea name="depart"  placeholder="请输入内容" class="layui-textarea"></textarea>
+                                    <textarea name="remark"  placeholder="请输入内容" class="layui-textarea"></textarea>
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -129,11 +126,11 @@
 <script th:src="@{/layui.all.js}" ></script>
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
-    function submitCustomer() {
+    function submitContact() {
 
-        var param=$("#customer").serialize();
+        var param=$("#contact").serialize();
         console.log(param);
-        var url='/user/addContact';
+        var url='/user/contact/addContact';
         $.ajax({
             type: "POST",
             url: url,//注意路径
@@ -178,23 +175,23 @@
 
         //执行一个 table 实例
         table.render({
-            elem: '#cusList'
+            elem: '#conList'
             , height: 332
-            , url: '/user/loadAllCustomer' //数据接口
+            , url: '/user/contact/loadAllContact' //数据接口
             , page: true //开启分页
             , cols: [
                 [
                     {checkbox: true}
-                    , {field: 'cname', title: '客户名称', width: 110, sort: true}
-                    , {field: 'ctype', title: '客户类型', width: 100, sort: true}
+                    , {field: 'name', title: '联系人名称', width: 110, sort: true}
+                    , {field: 'belongCus', title: '所属客户', width: 100, sort: true}
                     , {field: 'sex', title: '性别', width: 70}
                     , {field: 'telephone', title: '手机', width: 120}
                     , {field: 'phone', title: '座机', width: 120}
                     , {field: 'email', title: '电子邮件', width: 140,}
-                    , {field: 'address', title: '地址', width: 160}
+                    , {field: 'position', title: '职位', width: 160}
                     , {field: 'remark', title: '备注', width: 165,}
-                    ,{field: 'nextDate',title:'下次联系时间',width:140}
-                    ,{field: 'giveDate',title:'客户分配时间',width:140}
+                    , {field: 'nextDate',title:'下次联系时间',width:140}
+                    , {field: 'giveDate',title:'分配时间',width:140}
                     , {fixed: '', width: 165, align: 'center', toolbar: '#barDemo'}
                 ]
             ]
@@ -205,23 +202,98 @@
             ,limit: 5 //每页默认显示的数量
 
         });
-
         //监听工具条
         table.on('tool(demo)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
                 , layEvent = obj.event; //获得 lay-event 对应的值
-            if (layEvent === 'detail') {
-                layer.msg('查看操作');
+            if (layEvent === 'edit') {
+                layer.open({
+                    type: 2,
+                    title: false,
+                    shade: [0.5],
+                    title: '客户信息修改',
+                    shadeClose: true,
+                    shade: 0.5,
+                    skin:'demo-class',
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['1000px', '660px'],
+                    shift: 2,
+                    content: '/user/contact/conEdit?conId='+data.conId, //iframe的url
+                });
             } else if (layEvent === 'del') {
-                layer.confirm('真的删除行么', function (index) {
+                console.log(data.uId);
+                var uId=data.uId;
+                var url="/user/deleteCus?uId="+uId;
+                layer.confirm('真的删除么', function (index) {
+                    $.ajax({
+                        type: "POST",
+                        url: url,//注意路径
+                        data: data,
+                        dataType: "json",
+                        success:function(data){
+                            if(data.result=='SUCCESS'){
+                                layer.confirm('删除成功', {
+                                    btn: ['确认' ] //可以无限个按钮
+                                    ,btn1: function(index, layero){
+
+                                        location.reload();
+                                    }
+                                } );
+
+                            }else{
+                                layer.confirm('操作失败', {
+                                    btn: ['确认' ] //可以无限个按钮
+                                    ,btn1: function(index, layero){
+                                    }
+                                } );
+                            }
+                        },
+                        error:function(data){
+                            layer.confirm('操作 失败', {
+                                btn: ['确认' ] //可以无限个按钮
+                                ,btn1: function(index, layero){
+                                }
+                            } );
+                        }
+                    });
                     obj.del(); //删除对应行（tr）的DOM结构
                     layer.close(index);
                     //向服务端发送删除指令
                 });
-            } else if (layEvent === 'edit') {
-                layer.msg('编辑操作');
+            } else if (layEvent === 'share') {
+                layer.open({
+                    type: 2,
+                    title: false,
+                    shade: [0.5],
+                    title: '客户分享',
+                    shadeClose: true,
+                    shade: 0.5,
+                    skin:'demo-class',
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['1000px', '660px'],
+                    shift: 2,
+                    content: '/user/contact/conShare?conId='+data.conId, //iframe的url
+                    area: ['600px', '400px'],
+                });
+            }else if(layEvent==='conext'){
+                layer.open({
+                    type: 2,
+                    title: false,
+                    shade: [0.5],
+                    title: '下次联系时间',
+                    shadeClose: true,
+                    shade: 0.5,
+                    skin:'demo-class',
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['1000px', '660px'],
+                    shift: 2,
+                    content: '/user/conext?cusId='+data.cusId, //iframe的url
+                });
             }
         });
+
+
+
     })
     /*]]>*/
 </script>

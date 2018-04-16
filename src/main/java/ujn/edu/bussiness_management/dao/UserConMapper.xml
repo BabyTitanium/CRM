@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ujn.edu.bussiness_management.dao.UserConMapper">
+  <resultMap id="BaseResultMap" type="ujn.edu.bussiness_management.model.UserCon">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="userId" jdbcType="BIGINT" property="userId" />
+    <result column="conId" jdbcType="BIGINT" property="conId" />
+    <result column="nextDate" jdbcType="TIMESTAMP" property="nextDate" />
+    <result column="giveDate" jdbcType="TIMESTAMP" property="giveDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, userId, conId, nextDate, giveDate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_con
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_con
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="ujn.edu.bussiness_management.model.UserCon">
+    insert into user_con (id, userId, conId, 
+      nextDate, giveDate)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{conId,jdbcType=BIGINT}, 
+      #{nextDate,jdbcType=TIMESTAMP}, #{giveDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyProperty="id"   useGeneratedKeys="true"  parameterType="ujn.edu.bussiness_management.model.UserCon">
+    insert into user_con
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        userId,
+      </if>
+      <if test="conId != null">
+        conId,
+      </if>
+      <if test="nextDate != null">
+        nextDate,
+      </if>
+      <if test="giveDate != null">
+        giveDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="conId != null">
+        #{conId,jdbcType=BIGINT},
+      </if>
+      <if test="nextDate != null">
+        #{nextDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="giveDate != null">
+        #{giveDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ujn.edu.bussiness_management.model.UserCon">
+    update user_con
+    <set>
+      <if test="userId != null">
+        userId = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="conId != null">
+        conId = #{conId,jdbcType=BIGINT},
+      </if>
+      <if test="nextDate != null">
+        nextDate = #{nextDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="giveDate != null">
+        giveDate = #{giveDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" keyProperty="id"   useGeneratedKeys="true" parameterType="ujn.edu.bussiness_management.model.UserCon">
+    update user_con
+    set userId = #{userId,jdbcType=BIGINT},
+      conId = #{conId,jdbcType=BIGINT},
+      nextDate = #{nextDate,jdbcType=TIMESTAMP},
+      giveDate = #{giveDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectAllContact" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT c.*,us.id as uId,us.giveDate as giveDate ,us.nextDate as nextDate,us.conId as conId
+    FROM user_con us,user u,contact c
+    WHERE
+    u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.conId=c.id
+    limit #{first,jdbcType=BIGINT},#{last,jdbcType=BIGINT}
+  </select>
+  <select id="selectCountAllContact" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(*) from((SELECT c.*
+    FROM user_con us,user u,contact c
+    WHERE
+    u.id=#{id,jdbcType=BIGINT} AND u.id=us.userId AND us.conId=c.id) as  s)
+  </select>
+</mapper>

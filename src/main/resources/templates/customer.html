@@ -42,7 +42,10 @@
                     </script>
 
                 </div>
-                <div class="layui-tab-item">内容3</div>
+                <div class="layui-tab-item">
+                    <table class="layui-hide" id="shareList" lay-filter="dem"></table>
+
+                </div>
                 <div class="layui-tab-item">
                     <!--新建客户-->
                     <div class="layui-col-lg6">
@@ -176,7 +179,7 @@
         //执行一个 table 实例
         table.render({
             elem: '#cusList'
-            , height: 332
+
             , url: '/user/loadAllCustomer' //数据接口
             , page: true //开启分页
             , cols: [
@@ -192,17 +195,38 @@
                     , {field: 'remark', title: '备注', width: 165,}
                     ,{field: 'nextDate',title:'下次联系时间',width:140}
                     ,{field: 'giveDate',title:'客户分配时间',width:140}
-                    , {fixed: '', width: 200, align: 'center', toolbar: '#barDemo'}
+                    , {fixed: '',title:'操作', width: 220, align: 'center', toolbar: '#barDemo'}
+
                 ]
             ]
             ,skin: 'row' //表格风格
             ,even: true
             ,page: true //是否显示分页
-            ,limits: [5, 7, 10]
-            ,limit: 5 //每页默认显示的数量
+            ,limit: 10
 
         });
+        //执行一个 table 实例
+        table.render({
+            elem: '#shareList'
 
+            , url: '/user/loadSharedCustomer' //数据接口
+            , page: true //开启分页
+            , cols: [
+                [
+                    {checkbox: true}
+                    , {field: 'cname', title: '客户名称', width: 110, sort: true}
+                    , {field: 'ctype', title: '客户类型', width: 100, sort: true}
+                    , {field: 'sharedate', title: '分享时间', width: 120}
+                    , {field: 'realName', title: '接收者', width: 120}
+
+                ]
+            ]
+            ,skin: 'row' //表格风格
+            ,even: true
+            ,page: true //是否显示分页
+            ,limit: 1
+
+        });
         //监听工具条
         table.on('tool(demo)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
@@ -222,7 +246,41 @@
                     content: '/user/cusEdit?cusId='+data.cusId, //iframe的url
                 });
             } else if (layEvent === 'del') {
-                layer.confirm('真的删除行么', function (index) {
+                console.log(data.uId);
+                var uId=data.uId;
+                var url="/user/deleteCus?uId="+uId;
+                layer.confirm('真的删除么', function (index) {
+                    $.ajax({
+                        type: "POST",
+                        url: url,//注意路径
+                        data: data,
+                        dataType: "json",
+                        success:function(data){
+                            if(data.result=='SUCCESS'){
+                                layer.confirm('删除成功', {
+                                    btn: ['确认' ] //可以无限个按钮
+                                    ,btn1: function(index, layero){
+
+                                        location.reload();
+                                    }
+                                } );
+
+                            }else{
+                                layer.confirm('操作失败', {
+                                    btn: ['确认' ] //可以无限个按钮
+                                    ,btn1: function(index, layero){
+                                    }
+                                } );
+                            }
+                        },
+                        error:function(data){
+                            layer.confirm('操作 失败', {
+                                btn: ['确认' ] //可以无限个按钮
+                                ,btn1: function(index, layero){
+                                }
+                            } );
+                        }
+                    });
                     obj.del(); //删除对应行（tr）的DOM结构
                     layer.close(index);
                     //向服务端发送删除指令
